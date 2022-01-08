@@ -1,26 +1,29 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void buildTree(int height);
+void buildTree(int height, FILE *file);
+void writeFile(FILE *file, char c);
 
-int main(int arg, char *arg1[]){
+int main(int argc, char *argv[]){
 
-    
     int height; 
     FILE *file = NULL;
 
-    if(arg < 2 ){
+    if(argc == 1 ){
         printf( "Enter the Height of the Tree: " );
         scanf( "%d", &height );
-        
-        //file = fopen( arg1[2], "w" );
+        printf("%c", '\n');
+    }
+    else if( argc > 2 ){
+        file = fopen( argv[2], "w" );
+        height = atoi(argv[1]);
     }
     else{
-        height = atoi(arg1[1]);
+        height = atoi(argv[1]);
     }
 
     if( height >= 0 && height <= 15){
-        buildTree(height);
+        buildTree(height, file);
         return 0;
     }
     
@@ -28,23 +31,34 @@ int main(int arg, char *arg1[]){
     
 }
 
-void buildTree(int height){
+void buildTree(int height, FILE *file){
     for(int i = 1; i <= height; i++){
         if( height - i >= 3){
             for(int j = 0; j < height - i - 3; j++){
-                putchar(' ');
+                writeFile(file, ' ');
             }
             for(int j = 0; j < 2*i - 1; j++){
-                putchar('*');
+                writeFile(file, '*');
             }
         }
         else{
             for(int i = 0; i < height - 4; i++){
-                putchar(' ');
+                writeFile(file, ' ');
             }
-            putchar('*');
+                writeFile(file, '*');
         }
-        putchar('\n');
+        writeFile(file, '\n');
+    }
+}
+
+void writeFile(FILE *file, char c)
+{
+    if( file == NULL ){
+        putchar(c);
+    }
+    else{
+        fprintf( file, "%c", c);
 
     }
 }
+
