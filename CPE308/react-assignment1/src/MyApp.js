@@ -6,9 +6,10 @@ import axios from 'axios';
 
 
 function MyApp() {
-    const [characters, setCharacters] = useState([]);
+   const [characters, setCharacters] = useState([]);
+   //axios.get('http://localhost:5000/users').then(response => [characters, setCharacters] = useState(response.data.data));
 
-  useEffect(() => {
+   useEffect(() => {
     fetchAll().then( result => {
        if (result)
           setCharacters(result);
@@ -16,10 +17,15 @@ function MyApp() {
     }, [] );
 
    function removeOneCharacter (index) {
-      const updated = characters.filter((character, i) => {
-         return i !== index
-      });
-      setCharacters(updated);
+      makeDeleteCall(characters[index].id).then( result => {
+         if (result && result.status === 204){
+
+            const updated = characters.filter((character, i) => {
+               return i !== index
+            });
+            setCharacters(updated);
+         }
+        });    
    }
 
    return (
@@ -28,11 +34,6 @@ function MyApp() {
       <Form handleSubmit={updateList} />
     </div>
   );
-
-
-  function updateList(person) {
-    setCharacters([...characters, person]);
-  }
 
   async function fetchAll(){
     try {
@@ -57,10 +58,24 @@ function MyApp() {
   }
 }
 
+async function makeDeleteCall(id){
+   try {
+      const response = await axios.delete('http://localhost:5000/users/'+id);
+      return response;
+   }
+   catch (error) {
+      console.log(error);
+      return false;
+   }
+ }
+
+
 function updateList(person) { 
-  makePostCall(person).then( result => {
-  if (result && result.status === 201)
-     setCharacters([...characters, person] );
+
+
+   makePostCall(person).then( result => {
+   if (result && result.status === 201)
+      setCharacters([...characters, result.data] );
   });
 }
   
